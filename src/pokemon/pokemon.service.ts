@@ -15,7 +15,7 @@ export class PokemonService {
 
   async create(createPokemonDto: CreatePokemonDto) {
     try {
-      createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase()
+      //createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase()
       const pokemon = await this.PokemonModel.create(createPokemonDto);
       return pokemon;
     } catch (error) {
@@ -71,13 +71,12 @@ export class PokemonService {
   async remove(id: string) {
     // const pokemon = await this.findOne(id);
     // await pokemon.deleteOne();
-    const {deletedCount} = await this.PokemonModel.deleteOne({_id:id});
-    if (deletedCount===0){
+    const { deletedCount } = await this.PokemonModel.deleteOne({ _id: id });
+    if (deletedCount === 0) {
       throw new BadRequestException(`El ID ${id} no se encontro`);
     }
     return;
   }
-
 
   private manejarError(error: any) {
     if (error.code === 11000) {
@@ -86,4 +85,28 @@ export class PokemonService {
     console.log(error);
     throw new InternalServerErrorException(`Hay un problema en el server, checar!`)
   }
+
+
+  ///Solo para SEED
+  async cargarDatos(createPokemonDto: CreatePokemonDto[]) {
+    try {
+      //createPokemonDto.name = createPokemonDto.name.toLocaleLowerCase()
+      const pokemon = await this.PokemonModel.insertMany(createPokemonDto);
+      return pokemon;
+    } catch (error) {
+      this.manejarError(error);
+    }
+
+  }
+  async RemoveAllData() {
+    try {
+      const { deletedCount } = await this.PokemonModel.deleteMany({});
+    } catch (error) {
+      this.manejarError(error);
+    }
+    return;
+  }
+
+
+
 }
